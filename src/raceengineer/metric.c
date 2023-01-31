@@ -1,0 +1,401 @@
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <string.h>
+#include <stdio.h>
+
+
+#include "metric.h"
+#include "playwav.h"
+
+#include "slog/slog.h"
+
+int doplay(int* lastplaylap, const char* afile, int lap, bool singleshot)
+{
+    if(strcmp(afile, "") == 0)
+    {
+        return 1;
+    }
+    if( lap > (*lastplaylap) || singleshot == true)
+    {
+        play(afile);
+        *lastplaylap = lap;
+    }
+    return 0;
+}
+
+void metricfree(Metric* this, int lap)
+{
+    ((vtable*)this->vtable)->freemetric(this);
+}
+
+void metriceval(Metric* this, int lap)
+{
+    ((vtable*)this->vtable)->eval(this, lap);
+}
+
+// integers
+int integer_metric_eval (Metric* m, int lap)
+{
+    IntegerMetric* im = (void *) m->derived;
+    int i = *(int*) (char*) im->value;
+
+    bool played = false;
+    if (m->maxind == false)
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (i < im->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+    else
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (i > im->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+
+    if (played == false && lap < 0)
+    {
+        doplay(&m->lastplaylap, m->afile0, lap, true);
+    }
+
+    return 0;
+}
+
+int summary_integer_metric_eval (Metric* m, int lap)
+{
+    Metric* imm1 = (void *) m->metric1;
+    IntegerMetric* im1 = (void *) imm1->derived;
+    int i1 = *(int*) im1->value;
+
+    Metric* imm2 = (void *) m->metric2;
+    IntegerMetric* im2 = (void *) imm2->derived;
+    int i2 = *(int*) im2->value;
+
+    Metric* imm3 = (void *) m->metric3;
+    IntegerMetric* im3 = (void *) imm3->derived;
+    int i3 = *(int*) im3->value;
+
+    Metric* imm4 = (void *) m->metric4;
+    IntegerMetric* im4 = (void *) imm4->derived;
+    int i4 = *(int*) im4->value;
+
+    bool played = false;
+    if (m->maxind == false)
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (i1 < im1->thresh[j] && i2 < im2->thresh[j] && i3 < im3->thresh[j] && i4 < im4->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+    else
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (i1 > im1->thresh[j] && i2 > im2->thresh[j] && i3 > im3->thresh[j] && i4 > im4->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+
+    if (played == false && lap < 0)
+    {
+        doplay(&m->lastplaylap, m->afile0, lap, true);
+    }
+    return 0;
+}
+
+// doubles
+int double_metric_eval (Metric* m, int lap)
+{
+    DoubleMetric* dm = (void *) m->derived;
+    double i = *(double*) (char*) dm->value;
+
+    bool played = false;
+    if (m->maxind == false)
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (i < dm->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+    else
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (i > dm->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+
+    if (played == false && lap < 0)
+    {
+        doplay(&m->lastplaylap, m->afile0, lap, true);
+    }
+
+    return 0;
+}
+
+int summary_double_metric_eval (Metric* m, int lap)
+{
+    Metric* dmm1 = (void *) m->metric1;
+    DoubleMetric* dm1 = (void *) dmm1->derived;
+    double d1 = *(double*) dm1->value;
+
+    Metric* dmm2 = (void *) m->metric2;
+    DoubleMetric* dm2 = (void *) dmm2->derived;
+    double d2 = *(double*) dm2->value;
+
+    Metric* dmm3 = (void *) m->metric3;
+    DoubleMetric* dm3 = (void *) dmm3->derived;
+    double d3 = *(double*) dm3->value;
+
+    Metric* dmm4 = (void *) m->metric4;
+    DoubleMetric* dm4 = (void *) dmm4->derived;
+    double d4 = *(double*) dm4->value;
+
+    bool played = false;
+    if (m->maxind == false)
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (d1 < dm1->thresh[j] && d2 < dm2->thresh[j] && d3 < dm3->thresh[j] && d4 < dm4->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+    else
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (d1 > dm1->thresh[j] && d2 > dm2->thresh[j] && d3 > dm3->thresh[j] && d4 > dm4->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+
+    if (played == false && lap < 0)
+    {
+        doplay(&m->lastplaylap, m->afile0, lap, true);
+    }
+    return 0;
+}
+
+// floats
+int float_metric_eval (Metric* m, int lap)
+{
+    FloatMetric* fm = (void *) m->derived;
+    float f = *(float*) (char*) fm->value;
+
+    bool played = false;
+    if (m->maxind == false)
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (f < fm->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+    else
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (f > fm->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+
+    if (played == false && lap < 0)
+    {
+        doplay(&m->lastplaylap, m->afile0, lap, true);
+    }
+
+    return 0;
+}
+
+
+int summary_float_metric_eval (Metric* m, int lap)
+{
+    Metric* fmm1 = (void *) m->metric1;
+    FloatMetric* fm1 = (void *) fmm1->derived;
+    float f1 = *(float*) fm1->value;
+
+    Metric* fmm2 = (void *) m->metric2;
+    FloatMetric* fm2 = (void *) fmm2->derived;
+    float f2 = *(float*) fm2->value;
+
+    Metric* fmm3 = (void *) m->metric3;
+    FloatMetric* fm3 = (void *) fmm3->derived;
+    float f3 = *(float*) fm3->value;
+
+    Metric* fmm4 = (void *) m->metric4;
+    FloatMetric* fm4 = (void *) fmm4->derived;
+    float f4 = *(float*) fm4->value;
+
+    bool played = false;
+    if (m->maxind == false)
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (f1 < fm1->thresh[j] && f2 < fm2->thresh[j] && f3 < fm3->thresh[j] && f4 < fm4->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+    else
+    {
+        for(int j=0; j<m->afilecount; j++)
+        {
+            if (f1 > fm1->thresh[j] && f2 > fm2->thresh[j] && f3 > fm3->thresh[j] && f4 > fm4->thresh[j])
+            {
+                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                played = true;
+            }
+        }
+    }
+
+    if (played == false && lap < 0)
+    {
+        doplay(&m->lastplaylap, m->afile0, lap, true);
+    }
+    return 0;
+}
+
+void free_float_metric(Metric* this)
+{
+    FloatMetric* fm = (void *) this->derived;
+    free(fm);
+}
+static const vtable float_metric_vtable = { &float_metric_eval, &free_float_metric };
+
+FloatMetric* new_float_metric()
+{
+    FloatMetric* this = (FloatMetric*) malloc(sizeof(FloatMetric));
+    this->m.eval = &metriceval;
+    this->m.derived = this;
+    this->m.type = FLOAT;
+    this->m.vtable = &float_metric_vtable;
+    return this;
+}
+
+void free_double_metric(Metric* this)
+{
+    DoubleMetric* dm = (void *) this->derived;
+    free(dm);
+}
+static const vtable double_metric_vtable = { &double_metric_eval, &free_double_metric };
+
+DoubleMetric* new_double_metric()
+{
+    DoubleMetric* this = (DoubleMetric*) malloc(sizeof(DoubleMetric));
+    this->m.eval = &metriceval;
+    this->m.derived = this;
+    this->m.type = DOUBLE;
+    this->m.vtable = &double_metric_vtable;
+    return this;
+}
+
+void free_integer_metric(Metric* this)
+{
+    IntegerMetric* im = (void *) this->derived;
+    free(im);
+}
+static const vtable integer_metric_vtable = { &integer_metric_eval, &free_integer_metric };
+
+IntegerMetric* new_integer_metric()
+{
+    IntegerMetric* this = (IntegerMetric*) malloc(sizeof(IntegerMetric));
+    this->m.eval = &metriceval;
+    this->m.derived = this;
+    this->m.type = INTEGER;
+    this->m.vtable = &integer_metric_vtable;
+    return this;
+}
+
+void free_summary_float_metric(Metric* this)
+{
+    SummaryFloatMetric* sfm = (void *) this->derived;
+    free(sfm);
+}
+static const vtable summary_float_metric_vtable = { &summary_float_metric_eval, &free_summary_float_metric };
+
+SummaryFloatMetric* new_summary_float_metric()
+{
+    SummaryFloatMetric* this = (SummaryFloatMetric*) malloc(sizeof(SummaryFloatMetric));
+    this->m.eval = &metriceval;
+    this->m.derived = this;
+    this->m.type = SUMFLOAT;
+    this->m.vtable = &summary_float_metric_vtable;
+    return this;
+}
+
+void free_summary_double_metric(Metric* this)
+{
+    SummaryDoubleMetric* sdm = (void *) this->derived;
+    free(sdm);
+}
+static const vtable summary_double_metric_vtable = { &summary_double_metric_eval, &free_summary_double_metric };
+
+SummaryDoubleMetric* new_summary_double_metric()
+{
+    SummaryDoubleMetric* this = (SummaryDoubleMetric*) malloc(sizeof(SummaryDoubleMetric));
+    this->m.eval = &metriceval;
+    this->m.derived = this;
+    this->m.type = SUMDOUBLE;
+    this->m.vtable = &summary_double_metric_vtable;
+    return this;
+}
+
+void free_summary_integer_metric(Metric* this)
+{
+    SummaryIntegerMetric* sim = (void *) this->derived;
+    free(sim);
+}
+static const vtable summary_integer_metric_vtable = { &summary_integer_metric_eval, &free_summary_integer_metric };
+
+SummaryIntegerMetric* new_summary_integer_metric()
+{
+    SummaryIntegerMetric* this = (SummaryIntegerMetric*) malloc(sizeof(SummaryIntegerMetric));
+    this->m.eval = &metriceval;
+    this->m.derived = this;
+    this->m.type = SUMINTEGER;
+    this->m.vtable = &summary_integer_metric_vtable;
+    return this;
+}
+
+
+

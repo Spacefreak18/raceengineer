@@ -1,0 +1,3 @@
+[submodule "src/raceengineer/simulatorapi/simapi"]
+	path = src/raceengineer/simulatorapi/simapi
+	url = https://github.com/Spacefreak18/simapi
