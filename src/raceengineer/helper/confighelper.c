@@ -22,6 +22,13 @@
 
 #define CONFIGSTR_MINMAX            "minormax"
 
+void resettingsfree(RaceEngineerSettings* rs)
+{
+    free(rs->metric_name);
+    free(rs->sounds_path);
+    free(rs);
+}
+
 int strtogame(const char* game, RaceEngineerSettings* rs)
 {
     slogd("Checking for %s in list of supported simulators.", game);

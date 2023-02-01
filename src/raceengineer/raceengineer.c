@@ -164,7 +164,7 @@ int main(int argc, char** argv)
     // todo: streamlined loading for singleshot mode
     if (rs->program_action == A_SINGLESHOT)
     {
-        rs->metricname = p->metric_name;
+        rs->metric_name = p->metric_name;
         slogt("nummetrics is %i", nummetrics);
         Metric* metrics[nummetrics];
         loadconfig(rs, &cfg, metrics, nummetrics);
@@ -178,7 +178,7 @@ int main(int argc, char** argv)
 
 
 cleanup_final:
-    free(rs);
+    resettingsfree(rs);
     free(p);
     exit(0);
 }

@@ -41,11 +41,11 @@ int singleshot(RaceEngineerSettings* rs, Metric* metrics[], int nummetrics)
     simdatamap(simdata, simmap, rs->sim_name);
 
     int j = 0;
-    slogt("Looking for metric for data node: %s", rs->metricname);
+    slogt("Looking for metric for data node: %s", rs->metric_name);
     while (j<nummetrics)
     {
 
-        if (metrics[j]->enabled == true && strcmp(metrics[j]->name, rs->metricname) == 0)
+        if (metrics[j]->enabled == true && strcmp(metrics[j]->name, rs->metric_name) == 0)
         {
             slogt("Evaluating metric %s", metrics[j]->name);
             metrics[j]->eval(metrics[j], -1);
