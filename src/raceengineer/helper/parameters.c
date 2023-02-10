@@ -101,9 +101,19 @@ ConfigError getParameters(int argc, char** argv, Parameters* p)
             p->program_action = A_SINGLESHOT;
             p->metric_name = arg_metric->sval[0];
             p->verbosity_count = arg_verbosity2->count;
-            exitcode = E_SUCCESS_AND_DO;
-            goto cleanup;
-        }
+            p->config_path = NULL;
+            if (arg_cpath2->sval[0] != NULL)
+            {
+                p->config_path = arg_cpath1->sval[0];
+            }
+            p->sounds_path = NULL;
+            if (arg_spath2->sval[0] != NULL)
+            {
+                p->sounds_path = arg_spath1->sval[0];
+            }
+                exitcode = E_SUCCESS_AND_DO;
+                goto cleanup;
+            }
         else
         {
             if (cmd2->count > 0)

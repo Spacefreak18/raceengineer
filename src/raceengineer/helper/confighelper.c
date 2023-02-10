@@ -58,7 +58,11 @@ int set_basic(RaceEngineerSettings* rs, const config_setting_t* config_metric, M
     m->lastplaylap = -2;
     const char* temp;
     config_setting_lookup_string(config_metric, "afile0", &temp);
-    m->afile0 = strdup(temp);
+    char* temp4 = malloc(1 + strlen(temp) + strlen(rs->sounds_path));
+    strcpy(temp4, rs->sounds_path);
+    strcat(temp4, temp);
+    m->afile0 = strdup(temp4);
+    free(temp4);
     config_setting_lookup_string(config_metric, "name", &temp);
     m->name = strdup(temp);
     config_setting_lookup_string(config_metric, "variable", &temp);
@@ -85,11 +89,11 @@ int set_basic(RaceEngineerSettings* rs, const config_setting_t* config_metric, M
             char* temp3 = malloc(1 + strlen(temp2) + strlen(rs->sounds_path));
             strcpy(temp3, rs->sounds_path);
             strcat(temp3, temp2);
-            m->afiles[i] = temp3;
-            //m->afiles[i] = strdup(config_setting_get_string_elem(config_afiles, i));
+            m->afiles[i] = strdup(temp3);
+            free(temp2);
+            free(temp3);
         }
     }
-
     return 0;
 }
 
