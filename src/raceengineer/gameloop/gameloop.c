@@ -57,7 +57,12 @@ int looper (RaceEngineerSettings* rs, Metric* metrics[], int nummetrics)
     int go = true;
     int lastlap = 0;
 
-    play("/home/paul/.cache/raceengineer/sounds/voice/radio_check/test/1.wav");
+    const char* radiocheckfile = "voice/radio_check/test/1.wav";
+    char* temp = malloc(1 + strlen(radiocheckfile) + strlen(rs->sounds_path));
+    strcpy(temp, rs->sounds_path);
+    strcat(temp, radiocheckfile);
+    play(temp);
+    free(temp);
 
     slogt("All data is setup, inside true gameloop");
     while (go == true)
