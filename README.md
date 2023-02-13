@@ -17,6 +17,7 @@ Cross Platform highly configurable tool for automated communication while playin
 - libao - cross-platform sound file library
 - argtable2
 - libconfig
+- libxdg
 - [slog](https://github.com/kala13x/slog) (static)
 - [simshmbridge](https://github.com/spacefreak18/simshmbridge)
 - [simapi](https://github.com/spacefreak18/simapi)
@@ -33,6 +34,10 @@ mkdir build; cd build
 cmake ..
 make
 ```
+
+## Setup
+be sure to set default_driver=pulse in [libao.conf](https://man.archlinux.org/man/libao.conf.5.en) , i've only tested this using pulseaudio,
+
 ## Usage
 ```
 raceengineer monitor --sim=ac -c $HOME/.config/raceengineer.config -p $HOME/.local/share/raceengineer/sounds/
@@ -62,4 +67,5 @@ raceengineer singleshot --sim=ac -m Tyre_Wear_All
 
 ## ToDo
  - more testing
+ - explore using mqtt for handling a queue of sound files to play
  - much, much more
