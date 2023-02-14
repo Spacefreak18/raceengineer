@@ -9,16 +9,29 @@
 
 #include "slog/slog.h"
 
-int doplay(int* lastplaylap, const char* afile, int lap, bool singleshot)
+int doplay(RepeatFreq repeat, uint64_t* lastplaytime, int* lastplaylap, int lap, int* lastthresh, int thresh, const char* afile, bool singleshot)
 {
     if(strcmp(afile, "") == 0)
     {
         return 1;
     }
-    if( lap > (*lastplaylap) || singleshot == true)
+    if(repeat == LAP && lap > (*lastplaylap))
     {
         play(afile);
         *lastplaylap = lap;
+        *lastthresh = thresh;
+        *lastplaytime = 1;
+    }
+    if((repeat == ONCHANGE || repeat == ONCE) && thresh != (*lastthresh))
+    {
+        play(afile);
+        if (repeat == ONCE)
+        {
+            return 0;
+        }
+        *lastthresh = thresh;
+        *lastplaylap = lap;
+        *lastplaytime = 1;
     }
     return 0;
 }
@@ -46,8 +59,9 @@ int integer_metric_eval (Metric* m, int lap)
         {
             if (i < im->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
@@ -57,15 +71,16 @@ int integer_metric_eval (Metric* m, int lap)
         {
             if (i > im->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
 
     if (played == false && lap < 0)
     {
-        doplay(&m->lastplaylap, m->afile0, lap, true);
+        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
     }
 
     return 0;
@@ -96,8 +111,9 @@ int summary_integer_metric_eval (Metric* m, int lap)
         {
             if (i1 < im1->thresh[j] && i2 < im2->thresh[j] && i3 < im3->thresh[j] && i4 < im4->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
@@ -107,15 +123,16 @@ int summary_integer_metric_eval (Metric* m, int lap)
         {
             if (i1 > im1->thresh[j] && i2 > im2->thresh[j] && i3 > im3->thresh[j] && i4 > im4->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
 
     if (played == false && lap < 0)
     {
-        doplay(&m->lastplaylap, m->afile0, lap, true);
+        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
     }
     return 0;
 }
@@ -133,8 +150,9 @@ int double_metric_eval (Metric* m, int lap)
         {
             if (i < dm->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
@@ -144,15 +162,16 @@ int double_metric_eval (Metric* m, int lap)
         {
             if (i > dm->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
 
     if (played == false && lap < 0)
     {
-        doplay(&m->lastplaylap, m->afile0, lap, true);
+        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
     }
 
     return 0;
@@ -183,8 +202,9 @@ int summary_double_metric_eval (Metric* m, int lap)
         {
             if (d1 < dm1->thresh[j] && d2 < dm2->thresh[j] && d3 < dm3->thresh[j] && d4 < dm4->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
@@ -194,15 +214,16 @@ int summary_double_metric_eval (Metric* m, int lap)
         {
             if (d1 > dm1->thresh[j] && d2 > dm2->thresh[j] && d3 > dm3->thresh[j] && d4 > dm4->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
 
     if (played == false && lap < 0)
     {
-        doplay(&m->lastplaylap, m->afile0, lap, true);
+        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
     }
     return 0;
 }
@@ -220,8 +241,9 @@ int float_metric_eval (Metric* m, int lap)
         {
             if (f < fm->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
@@ -231,15 +253,16 @@ int float_metric_eval (Metric* m, int lap)
         {
             if (f > fm->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
 
     if (played == false && lap < 0)
     {
-        doplay(&m->lastplaylap, m->afile0, lap, true);
+        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
     }
 
     return 0;
@@ -271,8 +294,9 @@ int summary_float_metric_eval (Metric* m, int lap)
         {
             if (f1 < fm1->thresh[j] && f2 < fm2->thresh[j] && f3 < fm3->thresh[j] && f4 < fm4->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
@@ -282,15 +306,16 @@ int summary_float_metric_eval (Metric* m, int lap)
         {
             if (f1 > fm1->thresh[j] && f2 > fm2->thresh[j] && f3 > fm3->thresh[j] && f4 > fm4->thresh[j])
             {
-                doplay(&m->lastplaylap, m->afiles[j], lap, false);
+                doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
+                break;
             }
         }
     }
 
     if (played == false && lap < 0)
     {
-        doplay(&m->lastplaylap, m->afile0, lap, true);
+        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
     }
     return 0;
 }

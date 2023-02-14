@@ -56,6 +56,9 @@ int set_basic(RaceEngineerSettings* rs, const config_setting_t* config_metric, M
     slogt("setting basic fields");
     m->maxind = false;
     m->lastplaylap = -2;
+    m->laststate = -1;
+    m->repeat = ONCHANGE;
+    m->lastplaytime = 0;
     const char* temp;
     config_setting_lookup_string(config_metric, "afile0", &temp);
     char* temp4 = malloc(1 + strlen(temp) + strlen(rs->sounds_path));

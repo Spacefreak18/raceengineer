@@ -6,6 +6,8 @@
 
 typedef enum MetricType { FLOAT, INTEGER, DOUBLE, SUMFLOAT, SUMINTEGER, SUMDOUBLE } MetricType;
 
+typedef enum RepeatFreq { ONCE, LAP, ALWAYS, ONCHANGE } RepeatFreq;
+
 typedef struct Metric Metric;
 
 struct Metric
@@ -16,11 +18,13 @@ struct Metric
     void (*freemetric) (Metric*);
     void* derived;
     MetricType type;
+    RepeatFreq repeat;
     const char* name;
     const char* variable;
     int enabled;
     bool maxind;
     int lastplaylap;
+    int laststate;
     uint64_t lastplaytime;
     const char* afile1;
     const char* afile2;
