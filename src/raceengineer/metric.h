@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef enum MetricType { FLOAT, INTEGER, DOUBLE, SUMFLOAT, SUMINTEGER, SUMDOUBLE } MetricType;
+typedef enum MetricType { SINGLEFLOAT, SINGLEINTEGER, SINGLEDOUBLE, SUMFLOAT, SUMINTEGER, SUMDOUBLE } MetricType;
 
 typedef enum RepeatFreq { ONCE, LAP, ALWAYS, ONCHANGE } RepeatFreq;
 

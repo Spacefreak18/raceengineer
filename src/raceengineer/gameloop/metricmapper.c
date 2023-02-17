@@ -57,15 +57,15 @@ int engineer_data_init(RaceEngineerSettings* rs, Metric* metrics[], int nummetri
             {
 
                 switch(metrics[i]->type) {
-                    case INTEGER:
+                    case SINGLEINTEGER:
                         IntegerMetric* im = (void *) metrics[i]->derived;
                         im->value = map[k].value;
                         break;
-                    case FLOAT:
+                    case SINGLEFLOAT:
                         FloatMetric* fm = (void *) metrics[i]->derived;
                         fm->value = map[k].value;
                         break;
-                    case DOUBLE:
+                    case SINGLEDOUBLE:
                         DoubleMetric* dm = (void *) metrics[i]->derived;
                         dm->value = map[k].value;
                         break;

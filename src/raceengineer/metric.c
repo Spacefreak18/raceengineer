@@ -332,7 +332,7 @@ FloatMetric* new_float_metric()
     FloatMetric* this = (FloatMetric*) malloc(sizeof(FloatMetric));
     this->m.eval = &metriceval;
     this->m.derived = this;
-    this->m.type = FLOAT;
+    this->m.type = SINGLEFLOAT;
     this->m.vtable = &float_metric_vtable;
     return this;
 }
@@ -349,7 +349,7 @@ DoubleMetric* new_double_metric()
     DoubleMetric* this = (DoubleMetric*) malloc(sizeof(DoubleMetric));
     this->m.eval = &metriceval;
     this->m.derived = this;
-    this->m.type = DOUBLE;
+    this->m.type = SINGLEDOUBLE;
     this->m.vtable = &double_metric_vtable;
     return this;
 }
@@ -366,7 +366,7 @@ IntegerMetric* new_integer_metric()
     IntegerMetric* this = (IntegerMetric*) malloc(sizeof(IntegerMetric));
     this->m.eval = &metriceval;
     this->m.derived = this;
-    this->m.type = INTEGER;
+    this->m.type = SINGLEINTEGER;
     this->m.vtable = &integer_metric_vtable;
     return this;
 }
