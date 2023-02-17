@@ -56,7 +56,8 @@ int engineer_data_init(RaceEngineerSettings* rs, Metric* metrics[], int nummetri
             if (strcmp(map[k].name, metrics[i]->variable) == 0)
             {
 
-                switch(metrics[i]->type) {
+                switch(metrics[i]->type)
+                {
                     case SINGLEINTEGER:
                         IntegerMetric* im = (void *) metrics[i]->derived;
                         im->value = map[k].value;
