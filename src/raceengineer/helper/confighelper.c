@@ -147,7 +147,7 @@ int loadconfig_scan(config_t* cfg)
     return clen;
 }
 
-int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int nummetrics)
+int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int nummetrics, struct Map* map, int mapsize)
 {
 
     slogi("creating dictionary of report metrics from configuration file for the race engineer");
@@ -159,12 +159,37 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int num
 
 
     const char* reporttype;
-    const char* datatype;
+    const char* datatype = NULL;
     for (int j = 0; j < clen; j++)
     {
         config_metric = config_setting_get_elem(config_metrics, j);
+        datatype = NULL;
         config_setting_lookup_string(config_metric, CONFIGSTR_REPORTTYPE, &reporttype);
-        config_setting_lookup_string(config_metric, CONFIGSTR_DATATYPE, &datatype);
+        int found = config_setting_lookup_string(config_metric, CONFIGSTR_DATATYPE, &datatype);
+
+        if (found == 0)
+        {
+            const char* temp;
+            config_setting_lookup_string(config_metric, "variable", &temp);
+            for (int k = 0; k < mapsize; k++)
+            {
+                if (strcmp(map[k].name, temp) == 0)
+                {
+                    switch ( map[k].dtype )
+                    {
+                        case INTEGER:
+                            datatype = CONFIGVAL_INTEGER;
+                            break;
+                        case FLOAT:
+                            datatype = CONFIGVAL_FLOAT;
+                            break;
+                        case DOUBLE:
+                            datatype = CONFIGVAL_DOUBLE;
+                            break;
+                    }
+                }
+            }
+        }
 
         if (strcmp(reporttype, CONFIGVAL_BASICREPORT) == 0)
         {
@@ -246,7 +271,31 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int num
     {
         config_metric = config_setting_get_elem(config_metrics, j);
         config_setting_lookup_string(config_metric, CONFIGSTR_REPORTTYPE, &reporttype);
-        config_setting_lookup_string(config_metric, CONFIGSTR_DATATYPE, &datatype);
+        int found = config_setting_lookup_string(config_metric, CONFIGSTR_DATATYPE, &datatype);
+
+        if (found == 0)
+        {
+            const char* temp;
+            config_setting_lookup_string(config_metric, "variable", &temp);
+            for (int k = 0; k < mapsize; k++)
+            {
+                if (strcmp(map[k].name, temp) == 0)
+                {
+                    switch ( map[k].dtype )
+                    {
+                        case INTEGER:
+                            datatype = CONFIGVAL_INTEGER;
+                            break;
+                        case FLOAT:
+                            datatype = CONFIGVAL_FLOAT;
+                            break;
+                        case DOUBLE:
+                            datatype = CONFIGVAL_DOUBLE;
+                            break;
+                    }
+                }
+            }
+        }
 
         if (strcmp(reporttype, CONFIGVAL_BASICREPORT) != 0)
         {

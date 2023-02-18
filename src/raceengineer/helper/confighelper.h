@@ -11,6 +11,7 @@
 #include "../metric.h"
 
 #include "../simulatorapi/simapi/simapi/simapi.h"
+#include "../simulatorapi/simapi/simmap/basicmap.h"
 
 typedef enum
 {
@@ -42,7 +43,7 @@ RaceEngineerSettings;
 
 int strtogame(const char* game, RaceEngineerSettings* ms);
 int loadconfig_scan(config_t* cfg);
-int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int nummetrics);
+int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int nummetrics, struct Map* map, int mapsize);
 void resettingsfree(RaceEngineerSettings* rs);
 
 #endif

@@ -12,6 +12,7 @@
 #include "playwav.h"
 #include "gameloop/gameloop.h"
 #include "gameloop/singleshot.h"
+#include "gameloop/metricmapper.h"
 #include "helper/parameters.h"
 #include "helper/dirhelper.h"
 #include "helper/confighelper.h"
@@ -153,11 +154,13 @@ int main(int argc, char** argv)
     }
 
     slogt("nummetrics is %i", nummetrics);
+    struct Map* map = create_map(rs, NULL, 0);
     Metric* metrics = malloc(nummetrics * sizeof(Metric));
     if (rs->program_action == A_MONITOR)
     {
-        loadconfig(rs, &cfg, metrics, nummetrics);
+        loadconfig(rs, &cfg, metrics, nummetrics, map, get_map_size(rs));
         config_destroy(&cfg);
+        free(map);
         slogt("nummetrics is %i", nummetrics);
         looper(rs, metrics, nummetrics);
     }
@@ -165,8 +168,9 @@ int main(int argc, char** argv)
     if (rs->program_action == A_SINGLESHOT)
     {
         rs->metric_name = (char*) p->metric_name;
-        loadconfig(rs, &cfg, metrics, nummetrics);
+        loadconfig(rs, &cfg, metrics, nummetrics, map, get_map_size(rs));
         config_destroy(&cfg);
+        free(map);
         slogt("nummetrics is %i", nummetrics);
         singleshot(rs, metrics, nummetrics);
     }

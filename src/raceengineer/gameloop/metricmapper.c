@@ -19,24 +19,38 @@ int rf2_init()
     return 0;
 }
 
-int ac_init(struct Map* map, ACMap *acmap)
+int ac_init(struct Map* map, ACMap *acmap, int mapdata)
 {
     slogd("Mapping Assetto Corsa data");
-    CreateACMap(map, acmap);
+    CreateACMap(map, acmap, mapdata);
     return 0;
+}
+
+int get_map_size(RaceEngineerSettings* rs)
+{
+    switch ( rs->sim_name )
+    {
+        case SIMULATOR_ASSETTO_CORSA :
+            return ACMAP_SIZE;
+    }
+}
+
+struct Map* create_map(RaceEngineerSettings* rs, SimMap* simmap, int mapdata)
+{
+    struct Map* map;
+    switch ( rs->sim_name )
+    {
+        case SIMULATOR_ASSETTO_CORSA :
+            map = (struct Map*) malloc((ACMAP_SIZE) * sizeof(struct Map));
+            ac_init(map, &simmap->d.ac, mapdata);
+            break;
+    }
+    return map;
 }
 
 int engineer_data_init(RaceEngineerSettings* rs, Metric* metrics, int nummetrics, SimMap* simmap)
 {
-
-    // need a switch to set map size accordingly and run correct map function
-    struct Map* map = (struct Map*) malloc((ACMAP_SIZE) * sizeof(struct Map));
-    switch ( rs->sim_name )
-    {
-        case SIMULATOR_ASSETTO_CORSA :
-            ac_init(map, &simmap->d.ac);
-            break;
-    }
+    struct Map* map = create_map(rs, simmap, 1);
 
     slogt("Matching %i configured metrics with available data", nummetrics);
     for(int i = 0; i < nummetrics; i++)
@@ -46,7 +60,7 @@ int engineer_data_init(RaceEngineerSettings* rs, Metric* metrics, int nummetrics
             continue;
         }
         slogt("Checking %s", metrics[i].name);
-        for (int k = 0; k < ACMAP_SIZE; k++)
+        for (int k = 0; k < get_map_size(rs); k++)
         {
             slogt("Matching %s to %s", map[k].name, metrics[i].variable);
             if (map[k].name == NULL || metrics[i].variable == NULL)
