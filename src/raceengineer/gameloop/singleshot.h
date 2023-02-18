@@ -2,4 +2,4 @@
 #include "../helper/parameters.h"
 #include "../metric.h"
 
-int singleshot(RaceEngineerSettings* rs, Metric* metrics[], int nummetrics);
+int singleshot(RaceEngineerSettings* rs, Metric* metrics, int nummetrics);

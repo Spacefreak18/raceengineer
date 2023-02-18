@@ -16,7 +16,7 @@
 #include "../playwav.h"
 
 
-int singleshot(RaceEngineerSettings* rs, Metric* metrics[], int nummetrics)
+int singleshot(RaceEngineerSettings* rs, Metric* metrics, int nummetrics)
 {
 
     slogt("Starting RaceEngineer in Singleshot mode");
@@ -45,10 +45,10 @@ int singleshot(RaceEngineerSettings* rs, Metric* metrics[], int nummetrics)
     while (j<nummetrics)
     {
 
-        if (metrics[j]->enabled == true && strcmp(metrics[j]->name, rs->metric_name) == 0)
+        if (metrics[j].enabled == true && strcmp(metrics[j].name, rs->metric_name) == 0)
         {
-            slogt("Evaluating metric %s", metrics[j]->name);
-            metrics[j]->eval(metrics[j], -1);
+            slogt("Evaluating metric %s", metrics[j].name);
+            metrics[j].eval(&metrics[j], -1);
         }
         j++;
     }

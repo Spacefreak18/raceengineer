@@ -36,7 +36,7 @@ int doplay(RepeatFreq repeat, uint64_t* lastplaytime, int* lastplaylap, int lap,
     return 0;
 }
 
-void metricfree(Metric* this, int lap)
+void metricfree(Metric* this)
 {
     ((vtable*)this->vtable)->freemetric(this);
 }
@@ -50,7 +50,7 @@ void metriceval(Metric* this, int lap)
 int integer_metric_eval (Metric* m, int lap)
 {
     IntegerMetric* im = (void *) m->derived;
-    int i = *(int*) (char*) im->value;
+    int i = *(int*) m->value;
 
     bool played = false;
     if (m->maxind == false)
@@ -90,19 +90,19 @@ int summary_integer_metric_eval (Metric* m, int lap)
 {
     Metric* imm1 = (void *) m->metric1;
     IntegerMetric* im1 = (void *) imm1->derived;
-    int i1 = *(int*) im1->value;
+    int i1 = *(int*) imm1->value;
 
     Metric* imm2 = (void *) m->metric2;
     IntegerMetric* im2 = (void *) imm2->derived;
-    int i2 = *(int*) im2->value;
+    int i2 = *(int*) imm2->value;
 
     Metric* imm3 = (void *) m->metric3;
     IntegerMetric* im3 = (void *) imm3->derived;
-    int i3 = *(int*) im3->value;
+    int i3 = *(int*) imm3->value;
 
     Metric* imm4 = (void *) m->metric4;
     IntegerMetric* im4 = (void *) imm4->derived;
-    int i4 = *(int*) im4->value;
+    int i4 = *(int*) imm4->value;
 
     bool played = false;
     if (m->maxind == false)
@@ -141,7 +141,7 @@ int summary_integer_metric_eval (Metric* m, int lap)
 int double_metric_eval (Metric* m, int lap)
 {
     DoubleMetric* dm = (void *) m->derived;
-    double i = *(double*) (char*) dm->value;
+    double i = *(double*) m->value;
 
     bool played = false;
     if (m->maxind == false)
@@ -181,19 +181,19 @@ int summary_double_metric_eval (Metric* m, int lap)
 {
     Metric* dmm1 = (void *) m->metric1;
     DoubleMetric* dm1 = (void *) dmm1->derived;
-    double d1 = *(double*) dm1->value;
+    double d1 = *(double*) dmm1->value;
 
     Metric* dmm2 = (void *) m->metric2;
     DoubleMetric* dm2 = (void *) dmm2->derived;
-    double d2 = *(double*) dm2->value;
+    double d2 = *(double*) dmm2->value;
 
     Metric* dmm3 = (void *) m->metric3;
     DoubleMetric* dm3 = (void *) dmm3->derived;
-    double d3 = *(double*) dm3->value;
+    double d3 = *(double*) dmm3->value;
 
     Metric* dmm4 = (void *) m->metric4;
     DoubleMetric* dm4 = (void *) dmm4->derived;
-    double d4 = *(double*) dm4->value;
+    double d4 = *(double*) dmm4->value;
 
     bool played = false;
     if (m->maxind == false)
@@ -232,7 +232,7 @@ int summary_double_metric_eval (Metric* m, int lap)
 int float_metric_eval (Metric* m, int lap)
 {
     FloatMetric* fm = (void *) m->derived;
-    float f = *(float*) (char*) fm->value;
+    float f = *(float*) m->value;
 
     bool played = false;
     if (m->maxind == false)
@@ -263,6 +263,7 @@ int float_metric_eval (Metric* m, int lap)
     if (played == false && lap < 0)
     {
         doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+        slogt("Metric value is %f", f);
     }
 
     return 0;
@@ -273,19 +274,19 @@ int summary_float_metric_eval (Metric* m, int lap)
 {
     Metric* fmm1 = (void *) m->metric1;
     FloatMetric* fm1 = (void *) fmm1->derived;
-    float f1 = *(float*) fm1->value;
+    float f1 = *(float*) fmm1->value;
 
     Metric* fmm2 = (void *) m->metric2;
     FloatMetric* fm2 = (void *) fmm2->derived;
-    float f2 = *(float*) fm2->value;
+    float f2 = *(float*) fmm2->value;
 
     Metric* fmm3 = (void *) m->metric3;
     FloatMetric* fm3 = (void *) fmm3->derived;
-    float f3 = *(float*) fm3->value;
+    float f3 = *(float*) fmm3->value;
 
     Metric* fmm4 = (void *) m->metric4;
     FloatMetric* fm4 = (void *) fmm4->derived;
-    float f4 = *(float*) fm4->value;
+    float f4 = *(float*) fmm4->value;
 
     bool played = false;
     if (m->maxind == false)
@@ -316,6 +317,7 @@ int summary_float_metric_eval (Metric* m, int lap)
     if (played == false && lap < 0)
     {
         doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+        slogt("Metric values are %f, %f, %f, %f", f1, f2, f3, f4);
     }
     return 0;
 }

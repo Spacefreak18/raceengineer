@@ -35,6 +35,7 @@ struct Metric
     void* metric2;
     void* metric3;
     void* metric4;
+    void* value;
 };
 
 typedef struct {

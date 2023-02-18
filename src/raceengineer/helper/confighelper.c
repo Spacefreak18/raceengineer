@@ -24,7 +24,6 @@
 
 void resettingsfree(RaceEngineerSettings* rs)
 {
-    free(rs->metric_name);
     free(rs->sounds_path);
     free(rs);
 }
@@ -122,7 +121,7 @@ int loadconfig_scan(config_t* cfg)
     return clen;
 }
 
-int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics[], int nummetrics)
+int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int nummetrics)
 {
 
     slogi("creating dictionary of report metrics from configuration file for the race engineer");
@@ -163,8 +162,7 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics[], int n
                         fm->thresh[k] = (float) d;
                     }
                 }
-
-                metrics[j] = &fm->m;
+                metrics[j] = fm->m;
             }
             else if (strcmp(datatype, CONFIGVAL_DOUBLE) == 0)
             {
@@ -185,7 +183,7 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics[], int n
                     }
                 }
 
-                metrics[j] = &dm->m;
+                metrics[j] = dm->m;
             }
             else if (strcmp(datatype, CONFIGVAL_INTEGER) == 0)
             {
@@ -206,7 +204,7 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics[], int n
                     }
                 }
 
-                metrics[j] = &im->m;
+                metrics[j] = im->m;
             }
             else
             {
@@ -246,30 +244,30 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics[], int n
                 int links = 0;
                 for (int k = 0; k < j; k++)
                 {
-                    if (strcmp(metrics[k]->name, m1name) == 0)
+                    if (strcmp(metrics[k].name, m1name) == 0)
                     {
                         links++;
-                        sdm->m.metric1 = metrics[k];
+                        sdm->m.metric1 = &metrics[k];
                     }
-                    if (strcmp(metrics[k]->name, m2name) == 0)
+                    if (strcmp(metrics[k].name, m2name) == 0)
                     {
                         links++;
-                        sdm->m.metric2 = metrics[k];
+                        sdm->m.metric2 = &metrics[k];
                     }
-                    if (strcmp(metrics[k]->name, m3name) == 0)
+                    if (strcmp(metrics[k].name, m3name) == 0)
                     {
                         links++;
-                        sdm->m.metric3 = metrics[k];
+                        sdm->m.metric3 = &metrics[k];
                     }
-                    if (strcmp(metrics[k]->name, m4name) == 0)
+                    if (strcmp(metrics[k].name, m4name) == 0)
                     {
                         links++;
-                        sdm->m.metric4 = metrics[k];
+                        sdm->m.metric4 = &metrics[k];
                     }
                 }
                 slogd("found %i links for metric %s", links, sdm->m.name);
 
-                metrics[j] = &sdm->m;
+                metrics[j] = sdm->m;
             }
 
             if (strcmp(reporttype, CONFIGVAL_SUMREPORT) == 0 && strcmp(datatype, CONFIGVAL_FLOAT) == 0)
@@ -292,30 +290,30 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics[], int n
                 int links = 0;
                 for (int k = 0; k < j; k++)
                 {
-                    if (strcmp(metrics[k]->name, m1name) == 0)
+                    if (strcmp(metrics[k].name, m1name) == 0)
                     {
                         links++;
-                        sfm->m.metric1 = metrics[k];
+                        sfm->m.metric1 = &metrics[k];
                     }
-                    if (strcmp(metrics[k]->name, m2name) == 0)
+                    if (strcmp(metrics[k].name, m2name) == 0)
                     {
                         links++;
-                        sfm->m.metric2 = metrics[k];
+                        sfm->m.metric2 = &metrics[k];
                     }
-                    if (strcmp(metrics[k]->name, m3name) == 0)
+                    if (strcmp(metrics[k].name, m3name) == 0)
                     {
                         links++;
-                        sfm->m.metric3 = metrics[k];
+                        sfm->m.metric3 = &metrics[k];
                     }
-                    if (strcmp(metrics[k]->name, m4name) == 0)
+                    if (strcmp(metrics[k].name, m4name) == 0)
                     {
                         links++;
-                        sfm->m.metric4 = metrics[k];
+                        sfm->m.metric4 = &metrics[k];
                     }
                 }
                 slogd("found %i links for metric %s", links, sfm->m.name);
 
-                metrics[j] = &sfm->m;
+                metrics[j] = sfm->m;
             }
 
             if (strcmp(reporttype, CONFIGVAL_SUMREPORT) == 0 && strcmp(datatype, CONFIGVAL_INTEGER) == 0)
@@ -338,34 +336,33 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics[], int n
                 int links = 0;
                 for (int k = 0; k < j; k++)
                 {
-                    if (strcmp(metrics[k]->name, m1name) == 0)
+                    if (strcmp(metrics[k].name, m1name) == 0)
                     {
                         links++;
-                        sim->m.metric1 = metrics[k];
+                        sim->m.metric1 = &metrics[k];
                     }
-                    if (strcmp(metrics[k]->name, m2name) == 0)
+                    if (strcmp(metrics[k].name, m2name) == 0)
                     {
                         links++;
-                        sim->m.metric2 = metrics[k];
+                        sim->m.metric2 = &metrics[k];
                     }
-                    if (strcmp(metrics[k]->name, m3name) == 0)
+                    if (strcmp(metrics[k].name, m3name) == 0)
                     {
                         links++;
-                        sim->m.metric3 = metrics[k];
+                        sim->m.metric3 = &metrics[k];
                     }
-                    if (strcmp(metrics[k]->name, m4name) == 0)
+                    if (strcmp(metrics[k].name, m4name) == 0)
                     {
                         links++;
-                        sim->m.metric4 = metrics[k];
+                        sim->m.metric4 = &metrics[k];
                     }
                 }
                 slogd("found %i links for metric %s", links, sim->m.name);
 
-                metrics[j] = &sim->m;
+                metrics[j] = sim->m;
             }
         }
     }
 
     return RACEENGINEER_ERROR_NONE;
 }
-

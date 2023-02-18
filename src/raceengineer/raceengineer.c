@@ -152,10 +152,10 @@ int main(int argc, char** argv)
         nummetrics = loadconfig_scan(&cfg);
     }
 
+    slogt("nummetrics is %i", nummetrics);
+    Metric* metrics = malloc(nummetrics * sizeof(Metric));
     if (rs->program_action == A_MONITOR)
     {
-        slogt("nummetrics is %i", nummetrics);
-        Metric* metrics[nummetrics];
         loadconfig(rs, &cfg, metrics, nummetrics);
         config_destroy(&cfg);
         slogt("nummetrics is %i", nummetrics);
@@ -164,15 +164,14 @@ int main(int argc, char** argv)
     // todo: streamlined loading for singleshot mode
     if (rs->program_action == A_SINGLESHOT)
     {
-        rs->metric_name = p->metric_name;
-        slogt("nummetrics is %i", nummetrics);
-        Metric* metrics[nummetrics];
+        rs->metric_name = (char*) p->metric_name;
         loadconfig(rs, &cfg, metrics, nummetrics);
         config_destroy(&cfg);
         slogt("nummetrics is %i", nummetrics);
         singleshot(rs, metrics, nummetrics);
     }
 
+    // i must free that metric array
     free(config_file_str);
     free(cache_dir_str);
 

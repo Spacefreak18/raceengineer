@@ -26,7 +26,7 @@ int ac_init(struct Map* map, ACMap *acmap)
     return 0;
 }
 
-int engineer_data_init(RaceEngineerSettings* rs, Metric* metrics[], int nummetrics, SimMap* simmap)
+int engineer_data_init(RaceEngineerSettings* rs, Metric* metrics, int nummetrics, SimMap* simmap)
 {
 
     // need a switch to set map size accordingly and run correct map function
@@ -41,36 +41,36 @@ int engineer_data_init(RaceEngineerSettings* rs, Metric* metrics[], int nummetri
     slogt("Matching %i configured metrics with available data", nummetrics);
     for(int i = 0; i < nummetrics; i++)
     {
-        if (metrics[i]->variable == NULL)
+        if (metrics[i].variable == NULL)
         {
             continue;
         }
-        slogt("Checking %s", metrics[i]->name);
+        slogt("Checking %s", metrics[i].name);
         for (int k = 0; k < ACMAP_SIZE; k++)
         {
-            slogt("Matching %s to %s", map[k].name, metrics[i]->variable);
-            if (map[k].name == NULL || metrics[i]->variable == NULL)
+            slogt("Matching %s to %s", map[k].name, metrics[i].variable);
+            if (map[k].name == NULL || metrics[i].variable == NULL)
             {
                 continue;
             }
-            if (strcmp(map[k].name, metrics[i]->variable) == 0)
+            if (strcmp(map[k].name, metrics[i].variable) == 0)
             {
-
-                switch(metrics[i]->type)
-                {
-                    case SINGLEINTEGER:
-                        IntegerMetric* im = (void *) metrics[i]->derived;
-                        im->value = map[k].value;
-                        break;
-                    case SINGLEFLOAT:
-                        FloatMetric* fm = (void *) metrics[i]->derived;
-                        fm->value = map[k].value;
-                        break;
-                    case SINGLEDOUBLE:
-                        DoubleMetric* dm = (void *) metrics[i]->derived;
-                        dm->value = map[k].value;
-                        break;
-                }
+                metrics[i].value = map[k].value;
+                //switch(metrics[i].type)
+                //{
+                //    case SINGLEINTEGER:
+                //        IntegerMetric* im = (void *) metrics[i].derived;
+                //        im->value = map[k].value;
+                //        break;
+                //    case SINGLEFLOAT:
+                //        FloatMetric* fm = (void *) metrics[i].derived;
+                //        fm->value = map[k].value;
+                //        break;
+                //    case SINGLEDOUBLE:
+                //        DoubleMetric* dm = (void *) metrics[i].derived;
+                //        dm->value = map[k].value;
+                //        break;
+                //}
                 slogd("Match found!!");
                 break;
             }

@@ -22,7 +22,7 @@
 
 #define DEFAULT_UPDATE_RATE      1.0
 
-int looper (RaceEngineerSettings* rs, Metric* metrics[], int nummetrics)
+int looper (RaceEngineerSettings* rs, Metric* metrics, int nummetrics)
 {
 
     slogt("Starting RaceEngineer loop");
@@ -79,9 +79,9 @@ int looper (RaceEngineerSettings* rs, Metric* metrics[], int nummetrics)
         int j = 0;
         while (j<nummetrics)
         {
-            if (metrics[j]->enabled == true)
+            if (metrics[j].enabled == true)
             {
-                metrics[j]->eval(metrics[j], lap);
+                metrics[j].eval(&metrics[j], lap);
             }
             j++;
         }

@@ -42,7 +42,7 @@ RaceEngineerSettings;
 
 int strtogame(const char* game, RaceEngineerSettings* ms);
 int loadconfig_scan(config_t* cfg);
-int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics[], int nummetrics);
+int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int nummetrics);
 void resettingsfree(RaceEngineerSettings* rs);
 
 #endif
