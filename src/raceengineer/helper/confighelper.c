@@ -10,7 +10,6 @@
 
 #include "../metric.h"
 
-
 #define CONFIGSTR_REPORTTYPE        "reporttype"
 #define CONFIGVAL_BASICREPORT       "basic"
 #define CONFIGVAL_SUMREPORT         "summary"
@@ -21,6 +20,7 @@
 #define CONFIGVAL_INTEGER           "int"
 
 #define CONFIGSTR_MINMAX            "minormax"
+#define CONFIGSTR_REPEAT            "repeat"
 
 void resettingsfree(RaceEngineerSettings* rs)
 {
@@ -56,22 +56,48 @@ int set_basic(RaceEngineerSettings* rs, const config_setting_t* config_metric, M
     m->maxind = false;
     m->lastplaylap = -2;
     m->laststate = -1;
-    m->repeat = ONCHANGE;
     m->lastplaytime = 0;
+
     const char* temp;
+    config_setting_lookup_string(config_metric, CONFIGSTR_REPEAT, &temp);
+    if (rs->program_action == A_SINGLESHOT)
+    {
+        m->repeat = ONCE;
+    }
+    else
+    {
+        if (strcasecmp(temp, "always") == 0)
+        {
+            m->repeat = ALWAYS;
+        }
+        else if (strcasecmp(temp, "once") == 0)
+        {
+            m->repeat = ONCE;
+        }
+        else if (strcasecmp(temp, "lap") == 0)
+        {
+            m->repeat = LAP;
+        }
+        else
+        {
+            m->repeat = ONCHANGE;
+        }
+    }
+
     config_setting_lookup_string(config_metric, "afile0", &temp);
     char* temp4 = malloc(1 + strlen(temp) + strlen(rs->sounds_path));
     strcpy(temp4, rs->sounds_path);
     strcat(temp4, temp);
     m->afile0 = strdup(temp4);
     free(temp4);
+
     config_setting_lookup_string(config_metric, "name", &temp);
     m->name = strdup(temp);
     config_setting_lookup_string(config_metric, "variable", &temp);
     m->variable = strdup(temp);
     config_setting_lookup_bool(config_metric, "enabled", &m->enabled);
 
-    config_setting_lookup_string(config_metric, "minormax", &temp);
+    config_setting_lookup_string(config_metric, CONFIGSTR_MINMAX, &temp);
     if (strcmp(temp, "max") == 0)
     {
         m->maxind = true;
