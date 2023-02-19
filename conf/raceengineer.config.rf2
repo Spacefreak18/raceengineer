@@ -1,0 +1,14 @@
+monitor =   (
+
+                {   name        = "Fuel_Remaining";
+                    reporttype  = "basic";
+                    variable    = "rF2Telemetry_mVehicles0_mFuel";
+                    minormax    = "min";
+                    afile0      = "voice/fuel/plenty_of_fuel/2.wav";
+                    thresh      = [5.0, 10.0, 15.0, 20.0];
+                    afiles      = ["voice/fuel/two_laps_fuel/2.wav", "voice/fuel/three_laps_fuel/2.wav",
+                                    "voice/fuel/four_laps_fuel/2.wav", "voice/fuel/half_tank_warning/2.wav"];
+                    enabled     = true;
+                    repeat      = "onchange";
+                }
+            );
