@@ -8,6 +8,8 @@ set(simulatorapi_source_files
   simapi/simmap/basicmap.h
   simapi/simmap/mapacdata.c
   simapi/simmap/mapacdata.h
+  simapi/simmap/maprf2data.c
+  simapi/simmap/maprf2data.h
   simapi/simapi/ac.h
   simapi/simapi/rf2.h
 )

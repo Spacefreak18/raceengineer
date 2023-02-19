@@ -36,6 +36,11 @@ int strtogame(const char* game, RaceEngineerSettings* rs)
         slogd("Setting simulator to Assetto Corsa");
         rs->sim_name = SIMULATOR_ASSETTO_CORSA;
     }
+    else if (strcmp(game, "rf2") == 0)
+    {
+        slogd("Setting simulator to Assetto Corsa");
+        rs->sim_name = SIMULATOR_RFACTOR2;
+    }
     else
         if (strcmp(game, "test") == 0)
         {
@@ -219,6 +224,7 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int num
             {
                 DoubleMetric* dm = new_double_metric();
                 set_basic(rs, config_metric, &dm->m);
+                slogt("creating basic double metric with name %s", dm->m.name);
 
                 config_setting_t* config_thresh = NULL;
                 const char* path = "thresh";
