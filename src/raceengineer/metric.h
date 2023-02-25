@@ -19,17 +19,17 @@ struct Metric
     void* derived;
     MetricType type;
     RepeatFreq repeat;
-    const char* name;
-    const char* variable;
+    char* name;
+    char* variable;
     int enabled;
     bool maxind;
     int lastplaylap;
     int laststate;
     uint64_t lastplaytime;
-    const char* afile1;
-    const char* afile2;
-    const char* afile0;
-    const char* afiles[10];
+    char* afile1;
+    char* afile2;
+    char* afile0;
+    char* afiles[10];
     int afilecount;
     void* metric1;
     void* metric2;
@@ -116,5 +116,7 @@ FloatMetric* new_float_metric();
 SummaryFloatMetric* new_summary_float_metric();
 void free_float_metric(Metric* this);
 void free_summary_float_metric(Metric* this);
+
+void freemetrics(Metric* metrics, int num_metrics);
 
 #endif

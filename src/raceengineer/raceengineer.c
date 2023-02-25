@@ -176,6 +176,7 @@ int main(int argc, char** argv)
     }
 
     // i must free that metric array
+    freemetrics(metrics, nummetrics);
     free(config_file_str);
     free(cache_dir_str);
 

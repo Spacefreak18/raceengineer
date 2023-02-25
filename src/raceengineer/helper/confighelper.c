@@ -89,17 +89,31 @@ int set_basic(RaceEngineerSettings* rs, const config_setting_t* config_metric, M
         }
     }
 
-    config_setting_lookup_string(config_metric, "afile0", &temp);
-    char* temp4 = malloc(1 + strlen(temp) + strlen(rs->sounds_path));
-    strcpy(temp4, rs->sounds_path);
-    strcat(temp4, temp);
-    m->afile0 = strdup(temp4);
-    free(temp4);
+    int found = config_setting_lookup_string(config_metric, "afile0", &temp);
+    if (found == 0)
+    {
+        m->afile0 = NULL;
+    }
+    else
+    {
+        char* temp4 = malloc(1 + strlen(temp) + strlen(rs->sounds_path));
+        strcpy(temp4, rs->sounds_path);
+        strcat(temp4, temp);
+        m->afile0 = strdup(temp4);
+        free(temp4);
+    }
 
     config_setting_lookup_string(config_metric, "name", &temp);
     m->name = strdup(temp);
-    config_setting_lookup_string(config_metric, "variable", &temp);
-    m->variable = strdup(temp);
+    found = config_setting_lookup_string(config_metric, "variable", &temp);
+    if (found == 0)
+    {
+        m->variable = NULL;
+    }
+    else
+    {
+        m->variable = strdup(temp);
+    }
     config_setting_lookup_bool(config_metric, "enabled", &m->enabled);
 
     config_setting_lookup_string(config_metric, CONFIGSTR_MINMAX, &temp);
@@ -394,6 +408,7 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int num
                 }
                 slogd("found %i links for metric %s", links, sfm->m.name);
 
+                sfm->m.derived = NULL;
                 metrics[j] = sfm->m;
             }
 
@@ -440,6 +455,7 @@ int loadconfig(RaceEngineerSettings* rs, config_t* cfg, Metric* metrics, int num
                 }
                 slogd("found %i links for metric %s", links, sim->m.name);
 
+                sim->m.derived = NULL;
                 metrics[j] = sim->m;
             }
         }

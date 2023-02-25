@@ -36,6 +36,35 @@ int doplay(RepeatFreq repeat, uint64_t* lastplaytime, int* lastplaylap, int lap,
     return 0;
 }
 
+void freemetrics(Metric* metrics, int num_metrics)
+{
+    for (int i=0; i<num_metrics; i++)
+    {
+        Metric m = metrics[i];
+        if (m.afile0 != NULL)
+        {
+            free(m.afile0);
+        }
+        free(m.name);
+        if (m.variable != NULL)
+        {
+            free(m.variable);
+        }
+        for (int k=0; k<m.afilecount; k++)
+        {
+            if(m.afiles[k] != NULL)
+            {
+                //free(m.afiles[k]);
+            }
+        }
+        if (m.derived != NULL)
+        {
+            free(m.derived);
+        }
+    }
+    free(metrics);
+}
+
 void metricfree(Metric* this)
 {
     ((vtable*)this->vtable)->freemetric(this);
