@@ -52,9 +52,12 @@ void freemetrics(Metric* metrics, int num_metrics)
         }
         for (int k=0; k<m.afilecount; k++)
         {
-            if(m.afiles[k] != NULL)
+            if (m.afilecount > 0)
             {
-                //free(m.afiles[k]);
+                if(m.afiles[k] != NULL)
+                {
+                    free(m.afiles[k]);
+                }
             }
         }
         if (m.derived != NULL)
@@ -89,6 +92,7 @@ int integer_metric_eval (Metric* m, int lap)
             if (i < im->thresh[j])
             {
                 doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
+                m->laststate = j;
                 played = true;
                 break;
             }
@@ -101,15 +105,21 @@ int integer_metric_eval (Metric* m, int lap)
             if (i > im->thresh[j])
             {
                 doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
+                m->laststate = j;
                 played = true;
                 break;
             }
         }
     }
 
-    if (played == false && lap < 0)
+    if (played == false)
     {
-        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+        if (lap < 0)
+        {
+            doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+            slogt("Metric value is %i", i);
+        }
+        m->laststate = -1;
     }
 
     return 0;
@@ -159,10 +169,16 @@ int summary_integer_metric_eval (Metric* m, int lap)
         }
     }
 
-    if (played == false && lap < 0)
+    if (played == false)
     {
-        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+        if (lap < 0)
+        {
+            doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+            slogt("Metric values are %i, %i, %i, %i", i1, i2, i3, i4);
+        }
+        m->laststate = -1;
     }
+
     return 0;
 }
 
@@ -170,14 +186,14 @@ int summary_integer_metric_eval (Metric* m, int lap)
 int double_metric_eval (Metric* m, int lap)
 {
     DoubleMetric* dm = (void *) m->derived;
-    double i = *(double*) m->value;
+    double d = *(double*) m->value;
 
     bool played = false;
     if (m->maxind == false)
     {
         for(int j=0; j<m->afilecount; j++)
         {
-            if (i < dm->thresh[j])
+            if (d < dm->thresh[j])
             {
                 doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
@@ -189,7 +205,7 @@ int double_metric_eval (Metric* m, int lap)
     {
         for(int j=0; j<m->afilecount; j++)
         {
-            if (i > dm->thresh[j])
+            if (d > dm->thresh[j])
             {
                 doplay(m->repeat, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, j, m->afiles[j], false);
                 played = true;
@@ -198,9 +214,14 @@ int double_metric_eval (Metric* m, int lap)
         }
     }
 
-    if (played == false && lap < 0)
+    if (played == false)
     {
-        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+        if (lap < 0)
+        {
+            doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+            slogt("Metric value is %f", d);
+        }
+        m->laststate = -1;
     }
 
     return 0;
@@ -250,10 +271,16 @@ int summary_double_metric_eval (Metric* m, int lap)
         }
     }
 
-    if (played == false && lap < 0)
+    if (played == false)
     {
-        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+        if (lap < 0)
+        {
+            doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+            slogt("Metric values are %f, %f, %f, %f", d1, d2, d3, d4);
+        }
+        m->laststate = -1;
     }
+
     return 0;
 }
 
@@ -289,10 +316,14 @@ int float_metric_eval (Metric* m, int lap)
         }
     }
 
-    if (played == false && lap < 0)
+    if (played == false)
     {
-        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
-        slogt("Metric value is %f", f);
+        if (lap < 0)
+        {
+            doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+            slogt("Metric value is %f", f);
+        }
+        m->laststate = -1;
     }
 
     return 0;
@@ -343,11 +374,16 @@ int summary_float_metric_eval (Metric* m, int lap)
         }
     }
 
-    if (played == false && lap < 0)
+    if (played == false)
     {
-        doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
-        slogt("Metric values are %f, %f, %f, %f", f1, f2, f3, f4);
+        if (lap < 0)
+        {
+            doplay(ONCE, &m->lastplaytime, &m->lastplaylap, lap, &m->laststate, 0, m->afile0, true);
+            slogt("Metric values are %f, %f, %f, %f", f1, f2, f3, f4);
+        }
+        m->laststate = -1;
     }
+
     return 0;
 }
 

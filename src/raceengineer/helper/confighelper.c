@@ -125,6 +125,7 @@ int set_basic(RaceEngineerSettings* rs, const config_setting_t* config_metric, M
     config_setting_t* config_afiles = NULL;
     const char* path = "afiles";
     config_afiles = config_setting_get_member(config_metric, path);
+    m->afilecount = 0;
     if (config_afiles != NULL)
     {
         int clen = config_setting_length(config_afiles);
